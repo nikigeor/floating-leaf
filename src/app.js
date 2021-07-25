@@ -11,7 +11,8 @@ const MAX_SCENE_SIZE = 900
 let sceneSize = Math.min(MAX_SCENE_SIZE, Math.min(window.innerWidth, window.innerHeight));
 renderer.setSize(sceneSize, sceneSize);
 renderer.setClearColor(0x333333)
-document.body.appendChild(renderer.domElement);
+const canvas = renderer.domElement
+document.body.appendChild(canvas);
 
 //Camera
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
@@ -23,8 +24,7 @@ const light = new Light
 light.add(scene)
 
 //Leaf
-const leaf = new Leaves(1,.5,.1)
-leaf.add(scene)
+const leaf = new Leaves(scene)
 
 //Animation
 function animate() {
@@ -40,9 +40,16 @@ function animate() {
   }
 
   //Update scene elements
+  leaf.animate()
 
   //Render new scene
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 animate();
+// Event listeners
+function canvasClick() {
+  leaf.lift()
+}
+
+canvas.addEventListener('click', canvasClick)
