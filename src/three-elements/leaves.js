@@ -1,46 +1,59 @@
-import * as THREE from "three";
+import * as THREE from "three"
 
 class Leaves {
   constructor(scene) {
-    this.velocityVector = new THREE.Vector3(0, 0, 0);
-    this.accelerationVector = new THREE.Vector3(0, 0, 0);
-    this.forceVector = new THREE.Vector3(0, -0.005, 0);
+    this.velocityVector = new THREE.Vector3(0, 0, 0)
+    this.accelerationVector = new THREE.Vector3(0, 0, 0)
+    this.forceVector = new THREE.Vector3(0, -0.0005, 0)
+    this.pendulumDirection = 1
+    this.pendulumPosition = 0
 
-    const geometry = new THREE.BoxGeometry(5, 1, 3);
-    const material = new THREE.MeshLambertMaterial({ color: 0x882222 });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(-10, 0, 0);
+    const geometry = new THREE.BoxGeometry(1, .1, 1.5)
+    const material = new THREE.MeshLambertMaterial({ color: 0x882222 })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.position.set(0, 0, 0)
 
-    scene.add(mesh);
-    this.mesh = mesh;
+    scene.add(mesh)
+    this.mesh = mesh
   }
   lift() {
-    this.velocityVector.set(0, 2, 0);
-    this.accelerationVector.set(Math.random() / 10 - 0.05, -0.05, 0);
+    this.velocityVector.set(0, .6, 0)
+    this.accelerationVector.set(0, 0.001, 0)
+    this.isAnimationActive = true
   }
   animate() {
-    if (this.mesh.position.y <= 0 && this.velocityVector.y <= 0) {
-      this.count = 0;
-      return;
+    if(!this.isAnimationActive) {
+      return
     }
-    this.count++;
-    this.mesh.position.add(this.velocityVector);
+    
+    this.mesh.position.add(this.velocityVector)
+
+    if (this.mesh.position.y <= 0) {
+      this.velocityVector.set(0, 0, 0)
+      this.pendulumPosition += Math.PI/2
+      this.isAnimationActive = false
+    }
+    if (this.velocityVector.y < 0) {
+      this.mesh.position.add(
+        {
+          x: Math.sin(this.pendulumPosition) / 5,
+          y: (Math.cos(this.pendulumPosition)) / 50,
+          z: 0
+        }
+      )
+      this.pendulumPosition += .1
+    }
     this.mesh.position.clamp(
-      new THREE.Vector3(-18, 0, -10),
-      new THREE.Vector3(18, 30, 10)
-    );
-    if ((this.count - 15) % 30 === 0) {
-      this.accelerationVector.x *= -1;
-    }
-    this.velocityVector.add(this.accelerationVector);
+      { x: -18, y: 0, z: -10 },
+      { x: 18, y: 30, z: 10 }
+    )
+    this.velocityVector.add(this.accelerationVector)
     this.velocityVector.clamp(
-      new THREE.Vector3(-10, -0.1, -10),
-      new THREE.Vector3(10, 2, 10)
-    );
-    this.accelerationVector.add(this.forceVector);
-    console.log(this.mesh.position);
-    console.log(this.count);
+      { x: -10, y: -0.1, z: -1 },
+      { x: 10, y: 10, z: 10 }
+    )
+    this.accelerationVector.add(this.forceVector)
   }
 }
 
-export default Leaves;
+export default Leaves
