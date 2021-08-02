@@ -1,25 +1,17 @@
 import * as THREE from "three";
-import OrbitControls from "three/examples/jsm/controls/OrbitControls.js";
+import posz from "../Park2/posz.jpg";
+import posy from "../Park2/posy.jpg";
+import posx from "../Park2/posx.jpg";
+import negz from "../Park2/negz.jpg";
+import negy from "../Park2/negy.jpg";
+import negx from "../Park2/negx.jpg";
 
 class Background {
-  add(scene) {
-    this.controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = false;
-    scene.add(this.controls);
-
-    this.urls = [
-      "posx.jpg",
-      "negx.jpg",
-      "posy.jpg",
-      "negy.jpg",
-      "posz.jpg",
-      "negz.jpg",
-    ];
-
+  constructor(scene) {
     this.loader = new THREE.CubeTextureLoader();
-    scene.background = loader.load(urls);
+    this.urls = [posx, negx, posy, negy, posz, negz];
 
-    scene.add(this.urls);
+    scene.background = this.loader.load(this.urls);
   }
 }
 
